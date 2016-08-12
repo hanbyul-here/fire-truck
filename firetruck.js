@@ -160,15 +160,23 @@ var bang = (function () {
   originImage.src = "./asset/bang.svg";
 
   var outlineImage = new Image();
-   outlineImage.src = "./asset/empty-bang.svg"
+  outlineImage.src = "./asset/empty-bang.svg"
+
+  var blackImage = new Image();
+  blackImage.src = "./asset/black-bang.svg"
+
   var originImageloaded = false;
   var outlineImageloaded = false;
+  var blackImageloaded = false;
 
   originImage.onload = function () {
     originImageloaded = true;
   }
   outlineImage.onload = function () {
     outlineImageloaded = true;
+  }
+  blackImage.onload = function () {
+    blackImageloaded = true;
   }
 
   var imageOriginX = 0;
@@ -194,7 +202,7 @@ var bang = (function () {
       }
       mainCtx.restore();
     } else {
-      return window.setTimeout(draw.bind(this), 100);
+      return window.setTimeout(draw, 100);
     }
     mainCtx.restore();
   }
@@ -207,11 +215,26 @@ var bang = (function () {
       mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
       mainCtx.restore();
     } else {
-      return window.setTimeout(drawOutline.bind(this), 100);
+      return window.setTimeout(drawOutline, 100);
     }
+  }
+
+  var drawLastOne = function () {
+    if(blackImageloaded) {
+      mainCtx.save();
+      mainCtx.transform(0.95,-0.1,0,1,0,0);
+      mainCtx.translate(85, 110);
+      mainCtx.drawImage(blackImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
+
+      mainCtx.restore();
+    } else {
+      return window.setTimeout(drawLastOne, 100);
+    }
+    mainCtx.restore();
   }
   return {
     draw: draw,
+    drawLastOne: drawLastOne,
     drawOutline: drawOutline
   }
 
@@ -220,7 +243,7 @@ var bang = (function () {
 var cha = (function () {
 
   var chaPositions = [];
-  var radius = 14;
+  var radius = 13;
 
   var canvas, ctx, flag = false,
       prevX = 0,
@@ -270,6 +293,7 @@ var cha = (function () {
       }
     }
   }
+
   var draw = function () {
     for (var i = 0; i < chaPositions.length; i++) {
       mainCtx.beginPath();
@@ -309,8 +333,10 @@ function drawEverything () {
   bang.draw();
   so.draw();
   so.animate();
-  bang.drawOutline();
+
   cha.draw();
+  bang.drawLastOne();
+  bang.drawOutline();
   // animate
   return window.setTimeout(drawEverything.bind(this), 20);
 }
