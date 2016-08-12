@@ -72,6 +72,145 @@ function draw() {
   // mainCtx.closePath();
 }
 
+var so = (function () {
+
+  //110, 150, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI
+
+  var _startAng = 0;
+  var _bottomRadius = 80;
+  var _radius = 17;
+  var _rotatingRadius = 57;
+
+  var _pointO = {
+    x: 210,
+    y: 150,
+    rad: _radius
+  }
+
+  var _bottomO = {
+    x: 210,
+    y: 175,
+    angle: 0,
+    rad: _bottomRadius,
+    height: 45
+  }
+  var _leftSiot = {
+    x: _pointO.x + _rotatingRadius*Math.cos( _startAng + 185 * Math.PI/180),
+    y: _pointO.y + _rotatingRadius*Math.sin( _startAng + 185 * Math.PI/180),
+    angle: Math.PI*13.5/16,
+    rad: _radius,
+    height: 105
+  }
+
+  var _rightSiot = {
+    x: _pointO.x + _rotatingRadius*Math.cos( _startAng -5 * Math.PI/180),
+    y: _pointO.y + _rotatingRadius*Math.sin( _startAng -5 * Math.PI/180),
+    angle: -Math.PI*13.5/16,
+    rad: _radius,
+    height: 85
+  }
+
+
+  var _drawPoint = function (x, y, rad) {
+    mainCtx.beginPath();
+    mainCtx.lineWidth = 2;
+    mainCtx.strokeStyle = imageColor;
+    mainCtx.ellipse(x, y, rad, rad, 45 * Math.PI/180, 0, 2 * Math.PI);
+    mainCtx.fill();
+    mainCtx.stroke();
+    mainCtx.closePath();
+  }
+
+  var _drawFakeCylinder = function (x, y, angle, radius, height) {
+    mainCtx.save();
+    //mainCtx.translate(x, y);
+    mainCtx.transform(1,  Math.sin(angle)/3, -Math.sin(angle), 0.6, x ,y);
+
+    mainCtx.beginPath();
+    mainCtx.strokeStyle = imageColor;
+    mainCtx.lineWidth = 2;
+    mainCtx.ellipse(0, 0, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
+    mainCtx.fill();
+    mainCtx.stroke();
+    mainCtx.closePath();
+
+    mainCtx.beginPath();
+    mainCtx.fillRect(-radius,0,radius*2, -height);
+    mainCtx.closePath();
+
+    mainCtx.moveTo(-radius,0);
+    mainCtx.lineTo(-radius,-height);
+
+
+    mainCtx.moveTo(radius,0);
+    mainCtx.lineTo(radius,-height);
+    mainCtx.stroke();
+
+    mainCtx.beginPath();
+    mainCtx.lineWidth = 2;
+    mainCtx.ellipse(0, -height, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
+    mainCtx.fill();
+    mainCtx.stroke();
+    mainCtx.closePath();
+
+    mainCtx.restore();
+  }
+
+  var _drawFakeDash = function (x, y, angle, radius, height) {
+
+    mainCtx.save();
+    //mainCtx.translate(x, y);
+    mainCtx.transform(1,  Math.sin(angle)/3, -Math.sin(angle), 0.6, x ,y);
+
+    mainCtx.beginPath();
+    mainCtx.setLineDash([5, 3]);
+    mainCtx.lineWidth = 1;
+    mainCtx.strokeStyle = imageColor;
+    mainCtx.ellipse(0, 0, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
+    mainCtx.stroke();
+    mainCtx.closePath();
+
+    mainCtx.beginPath();
+    mainCtx.setLineDash([5, 3]);
+    mainCtx.lineWidth = 1;
+    mainCtx.ellipse(0, -height, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
+    mainCtx.stroke();
+    mainCtx.closePath();
+    mainCtx.restore();
+  }
+
+  var draw = function () {
+    // Bottom part
+    _drawFakeCylinder(_bottomO.x, _bottomO.y, _bottomO.angle, _bottomO.rad, _bottomO.height);
+
+    _drawPoint(_pointO.x, _pointO.y, _radius);
+
+    //drawLeftFakeShadow(60, 140, Math.PI*13.5/16, radius, 105);
+    _drawFakeCylinder(_rightSiot.x, _rightSiot.y, _rightSiot.angle, _rightSiot.rad, _rightSiot.height);
+    // Left diagonal line
+    _drawFakeCylinder(_leftSiot.x, _leftSiot.y, _leftSiot.angle, _leftSiot.rad, _leftSiot.height);
+
+    _drawPoint(_pointO.x, _pointO.y - 80, _radius)
+
+    _drawFakeDash(_bottomO.x, _bottomO.y, _bottomO.angle, _bottomO.rad, _bottomO.height);
+    _drawFakeDash(_rightSiot.x, _rightSiot.y, _rightSiot.angle, _rightSiot.rad, _rightSiot.height);
+    _drawFakeDash(_leftSiot.x, _leftSiot.y, _leftSiot.angle, _leftSiot.rad, _leftSiot.height);
+  }
+  var animate = function () {
+    _startAng += Math.PI/180;
+    // This is really lame calculation for oval
+    _leftSiot.x = _pointO.x + _rotatingRadius*Math.cos( _startAng + 185 * Math.PI/180);
+    _leftSiot.y = _pointO.y + _rotatingRadius*5/8*Math.sin( _startAng + 185 * Math.PI/180);
+    _rightSiot.x = _pointO.x + _rotatingRadius*Math.cos( _startAng - 5 * Math.PI/180);
+    _rightSiot.y = _pointO.y + _rotatingRadius*5/8*Math.sin( _startAng - 5 * Math.PI/180);
+  }
+  return {
+    animate: animate,
+    draw: draw
+  }
+})()
+
+
 
 
 function drawCha() {
@@ -123,154 +262,11 @@ originImage.onload = function () {
 var backgroundColor = 'black'
 var imageColor = 'white'
 
-// array of functions for the rendering loop
-var onRenderFcts= [];
+
 
 function drawBackground () {
   mainCtx.fillStyle = backgroundColor;
   mainCtx.fillRect(0, 0, width, height);
-}
-
-var bottomRadius = 80;
-var zSkew = 0.6;
-var radius = 17;
-
-var rotatingRadius = 57;
-var startAng = 0;
-
-//110, 150, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI
-var pointO = {
-  x: 210,
-  y: 150,
-  rad: radius
-}
-
-var bottomO = {
-  x: 210,
-  y: 175,
-  angle: 0,
-  rad: bottomRadius,
-  height: 45
-}
-
-var leftSiot = {
-  x: pointO.x + rotatingRadius*Math.cos( startAng + 185 * Math.PI/180),
-  y: pointO.y + rotatingRadius*Math.sin( startAng + 185 * Math.PI/180),
-  angle: Math.PI*13.5/16,
-  rad: radius,
-  height: 105
-}
-
-var rightSiot = {
-  x: pointO.x + rotatingRadius*Math.cos( startAng -5 * Math.PI/180),
-  y: pointO.y + rotatingRadius*Math.sin( startAng -5 * Math.PI/180),
-  angle: -Math.PI*13.5/16,
-  rad: radius,
-  height: 85
-}
-
-function drawSo () {
-
-  // Bottom part
-  drawFakeCylinder(bottomO.x, bottomO.y, bottomO.angle, bottomO.rad, bottomO.height);
-
-  mainCtx.beginPath();
-  mainCtx.lineWidth = 2;
-  mainCtx.strokeStyle = imageColor;
-  mainCtx.ellipse(pointO.x, pointO.y, pointO.rad, pointO.rad, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.fill();
-  mainCtx.stroke();
-  mainCtx.closePath();
-
-  //drawLeftFakeShadow(60, 140, Math.PI*13.5/16, radius, 105);
-  drawFakeCylinder(rightSiot.x, rightSiot.y, rightSiot.angle, rightSiot.rad, rightSiot.height);
-  // Left diagonal line
-  drawFakeCylinder(leftSiot.x, leftSiot.y, leftSiot.angle, leftSiot.rad, leftSiot.height);
-
-
-
-  mainCtx.beginPath();
-  mainCtx.lineWidth = 2;
-  mainCtx.strokeStyle = imageColor;
-  mainCtx.ellipse(pointO.x, pointO.y - 80, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.fill();
-  mainCtx.stroke();
-  mainCtx.closePath();
-
-  drawFakeDash(bottomO.x, bottomO.y, bottomO.angle, bottomO.rad, bottomO.height);
-  drawFakeDash(rightSiot.x, rightSiot.y, rightSiot.angle, rightSiot.rad, rightSiot.height);
-  drawFakeDash(leftSiot.x, leftSiot.y, leftSiot.angle, leftSiot.rad, leftSiot.height);
-}
-
-function drawLeftFakeShadow (x, y, angle, radius, height) {
-  mainCtx.save();
-  mainCtx.transform(1,0.2, -0.5,0.35,x,y);
-  mainCtx.beginPath();
-  mainCtx.fillStyle = 'rgba( 255,255,255,0.2)';
-  mainCtx.fillRect(-radius,0,radius*2,-height);
-  mainCtx.closePath();
-  mainCtx.restore();
-}
-
-function drawFakeCylinder (x, y, angle, radius, height) {
-
-  mainCtx.save();
-  //mainCtx.translate(x, y);
-  mainCtx.transform(1,  Math.sin(angle)/3, -Math.sin(angle), 0.6, x ,y);
-
-  mainCtx.beginPath();
-  mainCtx.strokeStyle = imageColor;
-  mainCtx.lineWidth = 2;
-  mainCtx.ellipse(0, 0, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.fill();
-  mainCtx.stroke();
-  mainCtx.closePath();
-
-  mainCtx.beginPath();
-  mainCtx.fillRect(-radius,0,radius*2, -height);
-  mainCtx.closePath();
-
-  mainCtx.moveTo(-radius,0);
-  mainCtx.lineTo(-radius,-height);
-
-
-  mainCtx.moveTo(radius,0);
-  mainCtx.lineTo(radius,-height);
-  mainCtx.stroke();
-
-  mainCtx.beginPath();
-  mainCtx.lineWidth = 2;
-  mainCtx.ellipse(0, -height, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.fill();
-  mainCtx.stroke();
-  mainCtx.closePath();
-
-  mainCtx.restore();
-}
-
-
-
-function drawFakeDash(x, y, angle, radius, height) {
-
-  mainCtx.save();
-  //mainCtx.translate(x, y);
-  mainCtx.transform(1,  Math.sin(angle)/3, -Math.sin(angle), 0.6, x ,y);
-
-  mainCtx.beginPath();
-  mainCtx.setLineDash([5, 3]);
-  mainCtx.lineWidth = 1;
-  mainCtx.strokeStyle = imageColor;
-  mainCtx.ellipse(0, 0, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.stroke();
-  mainCtx.closePath();
-
-  mainCtx.beginPath();
-  mainCtx.setLineDash([5, 3]);
-  mainCtx.lineWidth = 1;
-  mainCtx.ellipse(0, -height, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
-  mainCtx.stroke();
-  mainCtx.closePath();
-  mainCtx.restore();
 }
 
 
@@ -299,13 +295,15 @@ function drawBang () {
     // if(imageOriginX < 42) imageOriginX += 0.7;
     // if(imageOriginY < 30) imageOriginY += 0.5;
     // else {mainCtx.restore();
-      drawSo();
-       startAng += Math.PI/180;
+      //drawSo();
+      so.draw();
+      so.animate();
+       //startAng += Math.PI/180;
       // This is really lame calculation for oval
-      leftSiot.x = pointO.x + rotatingRadius*Math.cos( startAng + 185 * Math.PI/180);
-      leftSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng + 185 * Math.PI/180);
-      rightSiot.x = pointO.x + rotatingRadius*Math.cos( startAng - 5 * Math.PI/180);
-      rightSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng - 5 * Math.PI/180);
+      // leftSiot.x = pointO.x + rotatingRadius*Math.cos( startAng + 185 * Math.PI/180);
+      // leftSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng + 185 * Math.PI/180);
+      // rightSiot.x = pointO.x + rotatingRadius*Math.cos( startAng - 5 * Math.PI/180);
+      // rightSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng - 5 * Math.PI/180);
     }
     mainCtx.restore();
   }
