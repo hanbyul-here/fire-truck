@@ -1,76 +1,19 @@
 var mainCanvas = document.getElementById('mainCanvas');
 var mainCtx = mainCanvas.getContext('2d');
+// Settting up canvas resolution only with css makes content expanding problem
+var width = mainCanvas.width = window.innerWidth;
+var height = mainCanvas.height = window.innerHeight;
 
-var bangPositions = [];
-var chaPositions = [];
+var backgroundColor = 'black'
+var imageColor = 'white'
 
-mainCanvas.addEventListener("mousemove", throttle(function (e) {
-    findxy('move', e)
-}, 10) , false);
-mainCanvas.addEventListener("mousedown", function (e) {
-    findxy('down', e)
-}, false);
-mainCanvas.addEventListener("mouseup", function (e) {
-    findxy('up', e)
-}, false);
-mainCanvas.addEventListener("mouseout", function (e) {
-    findxy('out', e)
-}, false);
 
-var canvas, ctx, flag = false,
-    prevX = 0,
-    currX = 0,
-    prevY = 0,
-    currY = 0,
-    dot_flag = false;
 
-function findxy(res, e) {
-  if (res == 'down') {
-    prevX = currX;
-    prevY = currY;
-    currX = e.clientX - mainCanvas.offsetLeft;
-    currY = e.clientY - mainCanvas.offsetTop;
-    flag = true;
-    dot_flag = true;
-    if (dot_flag) {
-      chaPositions.push({
-        x: currX,
-        y: currY
-      })
-      // mainCtx.beginPath();
-      // mainCtx.ellipse(prevX, prevY, 10, 10, 45 * Math.PI/180, 0, 2 * Math.PI);
-      // mainCtx.fill();
-      // mainCtx.stroke();
-      // mainCtx.closePath();
-      // dot_flag = false;
-    }
-  }
-  if (res == 'up' || res == "out") {
-      flag = false;
-  }
-  if (res == 'move') {
-    if (flag) {
-      prevX = currX;
-      prevY = currY;
-      currX = e.clientX - mainCanvas.offsetLeft;
-      currY = e.clientY - mainCanvas.offsetTop;
-      draw();
-    }
-  }
+function drawBackground () {
+  mainCtx.fillStyle = backgroundColor;
+  mainCtx.fillRect(0, 0, width, height);
 }
 
-function draw() {
-  chaPositions.push({
-    x: currX,
-    y: currY
-  })
-  // mainCtx.beginPath();
-  // mainCtx.strokeStyle = imageColor;
-  // mainCtx.ellipse(currX, currY, 10, 10, 45 * Math.PI/180, 0, 2 * Math.PI);
-  // mainCtx.fill();
-  // mainCtx.stroke();
-  // mainCtx.closePath();
-}
 
 var so = (function () {
 
@@ -210,19 +153,173 @@ var so = (function () {
   }
 })()
 
+var bang = (function () {
 
 
+  var originImage = new Image();
+  originImage.src = "./asset/bang.svg";
 
-function drawCha() {
-  for (var i = 0; i < chaPositions.length; i++) {
-    mainCtx.beginPath();
-    mainCtx.strokeStyle = imageColor;
-    mainCtx.ellipse(chaPositions[i].x, chaPositions[i].y, 10, 10, 45 * Math.PI/180, 0, 2 * Math.PI);
-    mainCtx.fill();
-    mainCtx.stroke();
-    mainCtx.closePath();
+  var outlineImage = new Image();
+   outlineImage.src = "./asset/empty-bang.svg"
+  var originImageloaded = false;
+  var outlineImageloaded = false;
+
+  originImage.onload = function () {
+    originImageloaded = true;
   }
+  outlineImage.onload = function () {
+    outlineImageloaded = true;
+  }
+
+  var imageOriginX = 0;
+  var imageOriginY = 0;
+
+  var bangPositions = [];
+
+  for (var i = 0; i < 70; i++) {
+    bangPositions.push({
+      x: i + i*0.7,
+      y: i + i*0.5
+    })
+  }
+
+  var draw = function () {
+    if(originImageloaded) {
+      mainCtx.save();
+      mainCtx.transform(0.95,-0.1,0,1,0,0);
+      mainCtx.translate(85, 110);
+
+      for( var i = 0; i < bangPositions.length; i++) {
+        mainCtx.drawImage(originImage, bangPositions[i].x, bangPositions[i].x, 200, 200);
+      }
+      mainCtx.restore();
+    } else {
+      return window.setTimeout(draw.bind(this), 100);
+    }
+    mainCtx.restore();
+  }
+
+  var drawOutline = function () {
+    if(outlineImageloaded) {
+      mainCtx.save();
+      mainCtx.transform(0.97,-0.09,0,1,0,0);
+      mainCtx.translate(85, 110);
+      mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
+      mainCtx.restore();
+    } else {
+      return window.setTimeout(drawOutline.bind(this), 100);
+    }
+  }
+  return {
+    draw: draw,
+    drawOutline: drawOutline
+  }
+
+})()
+
+var cha = (function () {
+
+  var chaPositions = [];
+  var radius = 14;
+
+  var canvas, ctx, flag = false,
+      prevX = 0,
+      currX = 0,
+      prevY = 0,
+      currY = 0,
+      dot_flag = false;
+
+  var pushPositions = function() {
+    chaPositions.push({
+      x: currX,
+      y: currY
+    })
+  }
+
+  var findxy = function(res, e) {
+    if (res == 'down') {
+      prevX = currX;
+      prevY = currY;
+      currX = e.clientX - mainCanvas.offsetLeft;
+      currY = e.clientY - mainCanvas.offsetTop;
+      flag = true;
+      dot_flag = true;
+      if (dot_flag) {
+        chaPositions.push({
+          x: currX,
+          y: currY
+        })
+        // mainCtx.beginPath();
+        // mainCtx.ellipse(prevX, prevY, 10, 10, 45 * Math.PI/180, 0, 2 * Math.PI);
+        // mainCtx.fill();
+        // mainCtx.stroke();
+        // mainCtx.closePath();
+        // dot_flag = false;
+      }
+    }
+    if (res == 'up' || res == "out") {
+        flag = false;
+    }
+    if (res == 'move') {
+      if (flag) {
+        prevX = currX;
+        prevY = currY;
+        currX = e.clientX - mainCanvas.offsetLeft;
+        currY = e.clientY - mainCanvas.offsetTop;
+        pushPositions();
+      }
+    }
+  }
+  var draw = function () {
+    for (var i = 0; i < chaPositions.length; i++) {
+      mainCtx.beginPath();
+      mainCtx.strokeStyle = imageColor;
+      mainCtx.ellipse(chaPositions[i].x, chaPositions[i].y, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI);
+      mainCtx.fill();
+      mainCtx.stroke();
+      mainCtx.closePath();
+    }
+  }
+
+  var _addEvents = function () {
+    mainCanvas.addEventListener("mousemove", function (e) {
+        findxy('move', e)} , false);
+    mainCanvas.addEventListener("mousedown", function (e) {
+        findxy('down', e)
+    }, false);
+    mainCanvas.addEventListener("mouseup", function (e) {
+        findxy('up', e)
+    }, false);
+    mainCanvas.addEventListener("mouseout", function (e) {
+        findxy('out', e)
+    }, false);
+  }
+
+  _addEvents();
+
+  return {
+    draw: draw
+  }
+})()
+
+
+
+function drawEverything () {
+  drawBackground();
+  bang.draw();
+  so.draw();
+  so.animate();
+  bang.drawOutline();
+  cha.draw();
+  // animate
+  return window.setTimeout(drawEverything.bind(this), 20);
 }
+
+
+drawEverything();
+
+
+
 
 function throttle(fn, threshhold, scope) {
   threshhold || (threshhold = 250);
@@ -247,75 +344,3 @@ function throttle(fn, threshhold, scope) {
   };
 }
 
-// Settting up canvas resolution only with css makes content expanding problem
-var width = mainCanvas.width = window.innerWidth;
-var height = mainCanvas.height = window.innerHeight;
-
-
-var originImage = new Image();
-originImage.src = "./asset/bang.svg";
-var originImageloaded = false;
-originImage.onload = function () {
-  originImageloaded = true;
-}
-
-var backgroundColor = 'black'
-var imageColor = 'white'
-
-
-
-function drawBackground () {
-  mainCtx.fillStyle = backgroundColor;
-  mainCtx.fillRect(0, 0, width, height);
-}
-
-
-var imageOriginX = 0;
-var imageOriginY = 0;
-
-for (var i = 0; i < 60; i++) {
-  bangPositions.push({
-    x: i + i*0.7,
-    y: i + i*0.5
-  })
-}
-
-function drawBang () {
-   drawBackground();
-   drawCha();
-  if(originImageloaded) {
-    mainCtx.save();
-    mainCtx.transform(0.95,-0.1,0,1,0,0);
-    mainCtx.translate(30, 180);
-
-    for( var i = 0; i < bangPositions.length; i++) {
-      mainCtx.drawImage(originImage, bangPositions[i].x, bangPositions[i].x, 200, 200);
-    }
-    mainCtx.restore();
-    // if(imageOriginX < 42) imageOriginX += 0.7;
-    // if(imageOriginY < 30) imageOriginY += 0.5;
-    // else {mainCtx.restore();
-      //drawSo();
-      so.draw();
-      so.animate();
-       //startAng += Math.PI/180;
-      // This is really lame calculation for oval
-      // leftSiot.x = pointO.x + rotatingRadius*Math.cos( startAng + 185 * Math.PI/180);
-      // leftSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng + 185 * Math.PI/180);
-      // rightSiot.x = pointO.x + rotatingRadius*Math.cos( startAng - 5 * Math.PI/180);
-      // rightSiot.y = pointO.y + rotatingRadius*5/8*Math.sin( startAng - 5 * Math.PI/180);
-    }
-    mainCtx.restore();
-  }
-//}
-//drawSo();
-drawBackground();
-
-function drawEverything () {
-  //drawBackground();
-  drawBang();
-  return window.setTimeout(drawEverything.bind(this), 20);
-}
-
-
-drawEverything();
