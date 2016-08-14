@@ -4,6 +4,8 @@ var mainCtx = mainCanvas.getContext('2d');
 var width = mainCanvas.width = window.innerWidth;
 var height = mainCanvas.height = window.innerHeight;
 
+var scale = map(width, 300, 2000, 0.8, 1.2);
+
 var backgroundColor = 'black'
 var imageColor = 'white'
 
@@ -14,6 +16,9 @@ function drawBackground () {
   mainCtx.fillRect(0, 0, width, height);
 }
 
+function map (value, low1, high1, low2, high2) {
+  return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
 
 var so = (function () {
 
@@ -22,27 +27,29 @@ var so = (function () {
   var _startAng = 0;
   var _bottomRadius = 80;
   var _radius = 17;
-  var _rotatingRadius = 57;
+  var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: width/2 - 105,
-    y: 150,
+    x: -55,
+    y: -250,
     rad: _radius
   }
 
   var _bottomO = {
     x: _pointO.x,
-    y: 175,
+    y: _pointO.y + 25,
     angle: 0,
     rad: _bottomRadius,
     height: 45
   }
+
   var _leftSiot = {
     x: _pointO.x + _rotatingRadius*Math.cos( _startAng + 185 * Math.PI/180),
     y: _pointO.y + _rotatingRadius*Math.sin( _startAng + 185 * Math.PI/180),
     angle: Math.PI*13.5/16,
     rad: _radius,
     height: 105
+
   }
 
   var _rightSiot = {
@@ -51,6 +58,7 @@ var so = (function () {
     angle: -Math.PI*13.5/16,
     rad: _radius,
     height: 85
+
   }
 
 
@@ -122,13 +130,9 @@ var so = (function () {
     mainCtx.restore();
   }
 
-  var _map = function(value, low1, high1, low2, high2) {
-      return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-  }
   var rotate = function (x) {
-    console.log(x);
     var rot = x - width/2;
-    var mappedValue = _map(rot, -width/2, width/2, -Math.PI/4, Math.PI/4);
+    var mappedValue = map(rot, -width/2, width/2, -Math.PI/4, Math.PI/4);
     animate(mappedValue);
   }
 
@@ -194,14 +198,19 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = width/2 - 200;
-  var yPosition = 130;
+  var xPosition = -170;
+  var yPosition = -300;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
       x: i + i*0.7,
-      y: i + i*0.5
+      y: i + i*0.2
     })
+  }
+  
+  var ready = function () {
+    if(originImageloaded && outlineImageloaded && blackImageloaded) return true;
+    else return false;
   }
 
   var draw = function () {
@@ -211,7 +220,7 @@ var bang = (function () {
       mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.95,-0.1,0,1,0,0);
       for( var i = 0; i < bangPositions.length; i++) {
-        mainCtx.drawImage(originImage, bangPositions[i].x, bangPositions[i].x, 200, 200);
+        mainCtx.drawImage(originImage, bangPositions[i].x, bangPositions[i].y, 200, 200);
       }
       mainCtx.restore();
     } else {
@@ -226,7 +235,7 @@ var bang = (function () {
       
       mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.97,-0.09,0,1,0,0);
-      mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
+      mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].y, 200, 200);
       mainCtx.restore();
     } else {
       return window.setTimeout(drawOutline, 100);
@@ -238,7 +247,7 @@ var bang = (function () {
       mainCtx.save();
       mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.95,-0.1,0,1,0,0);
-      mainCtx.drawImage(blackImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
+      mainCtx.drawImage(blackImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].y, 200, 200);
 
       mainCtx.restore();
     } else {
@@ -249,7 +258,8 @@ var bang = (function () {
   return {
     draw: draw,
     drawLastOne: drawLastOne,
-    drawOutline: drawOutline
+    drawOutline: drawOutline,
+    ready: ready
   }
 
 })()
@@ -257,7 +267,7 @@ var bang = (function () {
 var cha = (function () {
 
   var chaPositions = [];
-  var radius = 12;
+  var radius = 11;
 
   var canvas, ctx, flag = false,
       prevX = 0,
@@ -266,10 +276,10 @@ var cha = (function () {
       currY = 0,
       dot_flag = false;
 
-  var pushPositions = function() {
+  var _pushPositions = function(currX, currY) {
     chaPositions.push({
-      x: currX,
-      y: currY
+      x: (currX/scale - width/2),
+      y: (currY/scale - height/2)
     })
   }
 
@@ -282,16 +292,11 @@ var cha = (function () {
       flag = true;
       dot_flag = true;
       if (dot_flag) {
-        chaPositions.push({
-          x: currX,
-          y: currY
-        })
-        // mainCtx.beginPath();
-        // mainCtx.ellipse(prevX, prevY, 10, 10, 45 * Math.PI/180, 0, 2 * Math.PI);
-        // mainCtx.fill();
-        // mainCtx.stroke();
-        // mainCtx.closePath();
-        // dot_flag = false;
+        _pushPositions(currX, currY);
+        // chaPositions.push({
+        //   x: currX,
+        //   y: currY
+        // })
       }
     }
     if (res == 'up' || res == "out") {
@@ -303,7 +308,7 @@ var cha = (function () {
         prevY = currY;
         currX = e.clientX - mainCanvas.offsetLeft;
         currY = e.clientY - mainCanvas.offsetTop;
-        pushPositions();
+        _pushPositions(currX, currY);
       } else {
         so.rotate(e.clientX);
       }
@@ -355,20 +360,30 @@ var cha = (function () {
 
 
 function drawEverything () {
-  drawBackground();
-  bang.draw();
-  so.draw();
-  //so.animate();
 
-  cha.draw();
-  bang.drawLastOne();
-  bang.drawOutline();
+  drawBackground();
+  if(bang.ready()) {
+    bang.draw();
+    so.draw();
+    //so.animate();
+
+    cha.draw();
+    bang.drawLastOne();
+    bang.drawOutline();
+  }
   // animate
   return window.setTimeout(drawEverything.bind(this), 10);
 }
 
+function scaleEverything () {
+  mainCtx.scale(scale,scale);
+}
 
+scaleEverything();
+mainCtx.translate(width/2, height/2);
 drawEverything();
+
+
 
 
 
