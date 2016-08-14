@@ -317,6 +317,16 @@ var cha = (function () {
     mainCanvas.addEventListener("mouseout", function (e) {
         findxy('out', e)
     }, false);
+
+    // mobile
+    mainCanvas.addEventListener("touchstart", function (e) {
+      findxy('down', e)} , false);
+    mainCanvas.addEventListener("touchend", function (e) {
+      findxy('up', e)} , false);
+    mainCanvas.addEventListener("touchcancel", function (e) {
+      findxy('out', e)} , false);
+    mainCanvas.addEventListener("touchmove", function (e) {
+      findxy('move', e)} , false);
   }
 
   _addEvents();
