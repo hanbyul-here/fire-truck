@@ -320,13 +320,15 @@ var cha = (function () {
 
     // mobile
     mainCanvas.addEventListener("touchstart", function (e) {
-      findxy('down', e)} , false);
+      findxy('down', e.touches[0])} , false);
     mainCanvas.addEventListener("touchend", function (e) {
-      findxy('up', e)} , false);
+      findxy('up', e.touches[0])} , false);
     mainCanvas.addEventListener("touchcancel", function (e) {
-      findxy('out', e)} , false);
+      findxy('out', e.touches[0])} , false);
     mainCanvas.addEventListener("touchmove", function (e) {
-      findxy('move', e)} , false);
+      console.log("move!")
+      console.log(e);
+      findxy('move', e.touches[0])} , false);
   }
 
   _addEvents();
