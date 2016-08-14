@@ -31,7 +31,7 @@ var so = (function () {
 
   var _pointO = {
     x: -55,
-    y: -250,
+    y: -150,
     rad: _radius
   }
 
@@ -199,7 +199,7 @@ var bang = (function () {
 
   var bangPositions = [];
   var xPosition = -170;
-  var yPosition = -300;
+  var yPosition = -200;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
