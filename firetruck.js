@@ -25,13 +25,13 @@ var so = (function () {
   var _rotatingRadius = 57;
 
   var _pointO = {
-    x: 210,
+    x: width/2 - 105,
     y: 150,
     rad: _radius
   }
 
   var _bottomO = {
-    x: 210,
+    x: _pointO.x,
     y: 175,
     angle: 0,
     rad: _bottomRadius,
@@ -122,6 +122,16 @@ var so = (function () {
     mainCtx.restore();
   }
 
+  var _map = function(value, low1, high1, low2, high2) {
+      return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+  }
+  var rotate = function (x) {
+    console.log(x);
+    var rot = x - width/2;
+    var mappedValue = _map(rot, -width/2, width/2, -Math.PI/4, Math.PI/4);
+    animate(mappedValue);
+  }
+
   var draw = function () {
     // Bottom part
     _drawFakeCylinder(_bottomO.x, _bottomO.y, _bottomO.angle, _bottomO.rad, _bottomO.height);
@@ -139,8 +149,8 @@ var so = (function () {
     _drawFakeDash(_rightSiot.x, _rightSiot.y, _rightSiot.angle, _rightSiot.rad, _rightSiot.height);
     _drawFakeDash(_leftSiot.x, _leftSiot.y, _leftSiot.angle, _leftSiot.rad, _leftSiot.height);
   }
-  var animate = function () {
-    _startAng += Math.PI/180;
+  var animate = function (ang) {
+    _startAng = ang;//Math.PI/180;
     // This is really lame calculation for oval
     _leftSiot.x = _pointO.x + _rotatingRadius*Math.cos( _startAng + 185 * Math.PI/180);
     _leftSiot.y = _pointO.y + _rotatingRadius*5/8*Math.sin( _startAng + 185 * Math.PI/180);
@@ -149,7 +159,8 @@ var so = (function () {
   }
   return {
     animate: animate,
-    draw: draw
+    draw: draw,
+    rotate: rotate
   }
 })()
 
@@ -183,6 +194,8 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
+  var xPosition = width/2 - 200;
+  var yPosition = 130;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
@@ -194,9 +207,9 @@ var bang = (function () {
   var draw = function () {
     if(originImageloaded) {
       mainCtx.save();
+      
+      mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.95,-0.1,0,1,0,0);
-      mainCtx.translate(85, 110);
-
       for( var i = 0; i < bangPositions.length; i++) {
         mainCtx.drawImage(originImage, bangPositions[i].x, bangPositions[i].x, 200, 200);
       }
@@ -210,8 +223,9 @@ var bang = (function () {
   var drawOutline = function () {
     if(outlineImageloaded) {
       mainCtx.save();
+      
+      mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.97,-0.09,0,1,0,0);
-      mainCtx.translate(85, 110);
       mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
       mainCtx.restore();
     } else {
@@ -222,8 +236,8 @@ var bang = (function () {
   var drawLastOne = function () {
     if(blackImageloaded) {
       mainCtx.save();
+      mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.95,-0.1,0,1,0,0);
-      mainCtx.translate(85, 110);
       mainCtx.drawImage(blackImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].x, 200, 200);
 
       mainCtx.restore();
@@ -243,7 +257,7 @@ var bang = (function () {
 var cha = (function () {
 
   var chaPositions = [];
-  var radius = 13;
+  var radius = 12;
 
   var canvas, ctx, flag = false,
       prevX = 0,
@@ -290,6 +304,8 @@ var cha = (function () {
         currX = e.clientX - mainCanvas.offsetLeft;
         currY = e.clientY - mainCanvas.offsetTop;
         pushPositions();
+      } else {
+        so.rotate(e.clientX);
       }
     }
   }
@@ -326,8 +342,6 @@ var cha = (function () {
     mainCanvas.addEventListener("touchcancel", function (e) {
       findxy('out', e.touches[0])} , false);
     mainCanvas.addEventListener("touchmove", function (e) {
-      console.log("move!")
-      console.log(e);
       findxy('move', e.touches[0])} , false);
   }
 
@@ -344,13 +358,13 @@ function drawEverything () {
   drawBackground();
   bang.draw();
   so.draw();
-  so.animate();
+  //so.animate();
 
   cha.draw();
   bang.drawLastOne();
   bang.drawOutline();
   // animate
-  return window.setTimeout(drawEverything.bind(this), 20);
+  return window.setTimeout(drawEverything.bind(this), 10);
 }
 
 
