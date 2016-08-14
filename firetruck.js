@@ -30,8 +30,8 @@ var so = (function () {
   var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: -55,
-    y: -150,
+    x: -25,
+    y: -100,
     rad: _radius
   }
 
@@ -198,8 +198,8 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = -170;
-  var yPosition = -200;
+  var xPosition = -140;
+  var yPosition = -150;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
