@@ -278,8 +278,8 @@ var cha = (function () {
 
   var _pushPositions = function(currX, currY) {
     chaPositions.push({
-      x: (currX/scale - width/2),
-      y: (currY/scale - height/2)
+      x: (currX - width/2)/scale,
+      y: (currY - height/2)/scale
     })
   }
   var _getDistance = function (x1, y1, x2, y2) {
@@ -387,9 +387,8 @@ function drawEverything () {
 function scaleEverything () {
   mainCtx.scale(scale,scale);
 }
-
-scaleEverything();
 mainCtx.translate(width/2, height/2);
+scaleEverything();
 drawEverything();
 
 
