@@ -282,6 +282,11 @@ var cha = (function () {
       y: (currY/scale - height/2)
     })
   }
+  var _getDistance = function (x1, y1, x2, y2) {
+    var x = x1-x2;
+    var y = y1-y2;
+    return Math.sqrt(x*x + y*y);
+  }
 
   var findxy = function(res, e) {
     if (res == 'down') {
@@ -293,10 +298,6 @@ var cha = (function () {
       dot_flag = true;
       if (dot_flag) {
         _pushPositions(currX, currY);
-        // chaPositions.push({
-        //   x: currX,
-        //   y: currY
-        // })
       }
     }
     if (res == 'up' || res == "out") {
@@ -308,7 +309,15 @@ var cha = (function () {
         prevY = currY;
         currX = e.clientX - mainCanvas.offsetLeft;
         currY = e.clientY - mainCanvas.offsetTop;
-        _pushPositions(currX, currY);
+        var distance = _getDistance(prevX, prevY, currX, currY)
+        if( distance > 20) {
+          console.log('too far!')
+          for (var i = 0; i < distance/20; i++) {
+            _pushPositions(prevX + (currX - prevX)/4 *i, prevY + (currY - prevY)/4 *i);
+          }
+        } else {
+          _pushPositions(currX, currY);
+        }
       } else {
         so.rotate(e.clientX);
       }
@@ -382,8 +391,6 @@ function scaleEverything () {
 scaleEverything();
 mainCtx.translate(width/2, height/2);
 drawEverything();
-
-
 
 
 
