@@ -13,7 +13,7 @@ var imageColor = 'white'
 
 function drawBackground () {
   mainCtx.fillStyle = backgroundColor;
-  mainCtx.fillRect(0, 0, width, height);
+  mainCtx.fillRect(-width/2, -height/2, width, height);
 }
 
 function map (value, low1, high1, low2, high2) {
