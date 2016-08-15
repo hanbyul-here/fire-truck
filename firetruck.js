@@ -30,8 +30,8 @@ var so = (function () {
   var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: -25,
-    y: -100,
+    x: -25*scale,
+    y: -100*scale,
     rad: _radius
   }
 
@@ -198,8 +198,8 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = -140;
-  var yPosition = -150;
+  var xPosition = -140*scale;
+  var yPosition = -150*scale;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
@@ -207,7 +207,7 @@ var bang = (function () {
       y: i + i*0.2
     })
   }
-  
+
   var ready = function () {
     if(originImageloaded && outlineImageloaded && blackImageloaded) return true;
     else return false;
@@ -216,7 +216,7 @@ var bang = (function () {
   var draw = function () {
     if(originImageloaded) {
       mainCtx.save();
-      
+
       mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.95,-0.1,0,1,0,0);
       for( var i = 0; i < bangPositions.length; i++) {
@@ -232,7 +232,7 @@ var bang = (function () {
   var drawOutline = function () {
     if(outlineImageloaded) {
       mainCtx.save();
-      
+
       mainCtx.translate(xPosition, yPosition);
       mainCtx.transform(0.97,-0.09,0,1,0,0);
       mainCtx.drawImage(outlineImage, bangPositions[bangPositions.length-1].x, bangPositions[bangPositions.length-1].y, 200, 200);
