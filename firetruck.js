@@ -30,7 +30,7 @@ var so = (function () {
   var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: -25*scale,
+    x: -15*scale,
     y: -100*scale,
     rad: _radius
   }
@@ -170,7 +170,6 @@ var so = (function () {
 
 var bang = (function () {
 
-
   var originImage = new Image();
   originImage.src = "./asset/bang.svg";
 
@@ -198,7 +197,7 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = -140*scale;
+  var xPosition = -130*scale;
   var yPosition = -150*scale;
 
   for (var i = 0; i < 70; i++) {
