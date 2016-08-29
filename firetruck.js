@@ -22,8 +22,6 @@ function map (value, low1, high1, low2, high2) {
 
 var so = (function () {
 
-  //110, 150, radius, radius, 45 * Math.PI/180, 0, 2 * Math.PI
-
   var _startAng = 0;
   var _bottomRadius = 80;
   var _radius = 17;
@@ -309,11 +307,18 @@ var cha = (function () {
         currX = e.clientX - mainCanvas.offsetLeft;
         currY = e.clientY - mainCanvas.offsetTop;
         var distance = _getDistance(prevX, prevY, currX, currY)
-        if( distance > 20) {
-          console.log('too far!')
-          for (var i = 0; i < distance/20; i++) {
-            _pushPositions(prevX + (currX - prevX)/4 *i, prevY + (currY - prevY)/4 *i);
+        if( distance > 30) {
+          // rough interpolation
+          var xGap = currX - prevX;
+          var yGap = currY - prevY;
+          var newX = prevX;
+          var newY = prevY;
+          while (_getDistance(prevX, prevY, newX, newY) < distance) {
+            newX += xGap/5;
+            newY += yGap/5;
+            _pushPositions(newX, newY);
           }
+
         } else {
           _pushPositions(currX, currY);
         }
