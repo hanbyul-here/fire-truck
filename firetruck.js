@@ -166,6 +166,54 @@ var so = (function () {
   }
 })()
 
+
+var boom = ( function () {
+  var pos = {
+    x: -100,
+    y: -120
+  };
+
+  var draw = function () {
+    mainCtx.save();
+    mainCtx.scale(0.7, 0.7);
+    _drawFirstShape(mainCtx, pos.x, pos.y);
+    mainCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    mainCtx.fill();
+    mainCtx.translate(0, 20);
+    _drawSecondShape(mainCtx, pos.x, pos.y);
+    mainCtx.fillStyle = 'rgb(0, 0, 0)';
+    mainCtx.fill();
+    mainCtx.restore();
+  }
+
+  // used http://www.victoriakirst.com/beziertool/ to get rough shape
+  var _drawFirstShape = function (ctx, xoff, yoff) {
+    ctx.beginPath();
+    ctx.moveTo(272 + xoff, 106 + yoff);
+    ctx.bezierCurveTo(267 + xoff, 247 + yoff, 410 + xoff, 139 + yoff, 399 + xoff, 149 + yoff);
+    ctx.bezierCurveTo(283 + xoff, 262 + yoff, 426 + xoff, 197 + yoff, 413 + xoff, 204 + yoff);
+    ctx.bezierCurveTo(288 + xoff, 269 + yoff, 418 + xoff, 332 + yoff, 404 + xoff, 326 + yoff);
+    ctx.bezierCurveTo(285 + xoff, 278 + yoff, 293 + xoff, 301 + yoff, 363 + xoff, 430 + yoff);
+    ctx.bezierCurveTo(370 + xoff, 443 + yoff, 271 + xoff, 283 + yoff, 161 + xoff, 434 + yoff);
+    ctx.bezierCurveTo(152 + xoff, 446 + yoff, 277 + xoff, 282 + yoff, 123 + xoff, 274 + yoff);
+    ctx.bezierCurveTo(104 + xoff, 273 + yoff, 243 + xoff, 264 + yoff, 163 + xoff, 164 + yoff);
+    ctx.bezierCurveTo(154 + xoff, 152 + yoff, 276 + xoff, 262 + yoff, 273 + xoff, 108 + yoff);
+    ctx.closePath();
+
+  }
+  var _drawSecondShape = function (ctx, xoff, yoff) {
+    ctx.beginPath();
+    ctx.moveTo(237 + xoff, 233 + yoff);
+    ctx.bezierCurveTo(257 + xoff, 263 + yoff, 324 + xoff, 237 + yoff, 309 + xoff, 236 + yoff);
+    ctx.bezierCurveTo(272 + xoff, 269 + yoff, 286 + xoff, 293 + yoff, 307 + xoff, 299 + yoff);
+    ctx.bezierCurveTo(309 + xoff, 304 + yoff, 255 + xoff, 280 + yoff, 239 + xoff, 300 + yoff);
+    ctx.bezierCurveTo(239 + xoff, 285 + yoff, 265 + xoff, 261 + yoff, 236 + xoff, 238 + yoff);    
+    ctx.closePath();
+  }
+  return {
+    draw: draw
+  }
+})();
 var bang = (function () {
 
   var originImage = new Image();
@@ -376,10 +424,11 @@ function drawEverything () {
 
   drawBackground();
   if(bang.ready()) {
+    boom.draw();
     bang.draw();
     so.draw();
     //so.animate();
-
+    
     cha.draw();
     bang.drawLastOne();
     bang.drawOutline();
