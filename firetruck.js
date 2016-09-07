@@ -207,7 +207,7 @@ var boom = ( function () {
     ctx.bezierCurveTo(257 + xoff, 263 + yoff, 324 + xoff, 237 + yoff, 309 + xoff, 236 + yoff);
     ctx.bezierCurveTo(272 + xoff, 269 + yoff, 286 + xoff, 293 + yoff, 307 + xoff, 299 + yoff);
     ctx.bezierCurveTo(309 + xoff, 304 + yoff, 255 + xoff, 280 + yoff, 239 + xoff, 300 + yoff);
-    ctx.bezierCurveTo(239 + xoff, 285 + yoff, 265 + xoff, 261 + yoff, 236 + xoff, 238 + yoff);    
+    ctx.bezierCurveTo(239 + xoff, 285 + yoff, 265 + xoff, 261 + yoff, 236 + xoff, 238 + yoff);
     ctx.closePath();
   }
   return {
@@ -428,13 +428,13 @@ function drawEverything () {
     bang.draw();
     so.draw();
     //so.animate();
-    
+
     cha.draw();
     bang.drawLastOne();
     bang.drawOutline();
   }
   // animate
-  return window.setTimeout(drawEverything.bind(this), 10);
+  window.requestAnimationFrame(drawEverything);
 }
 
 function scaleEverything () {
@@ -443,6 +443,7 @@ function scaleEverything () {
 mainCtx.translate(width/2, height/2);
 scaleEverything();
 drawEverything();
+window.requestAnimationFrame(drawEverything);
 
 
 
