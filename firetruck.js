@@ -28,8 +28,8 @@ var so = (function () {
   var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: -15*scale,
-    y: -100*scale,
+    x: -40*scale,
+    y: -130*scale,
     rad: _radius
   }
 
@@ -169,15 +169,15 @@ var so = (function () {
 
 var boom = ( function () {
   var pos = {
-    x: -100,
-    y: -120
+    x: -150,
+    y: -130
   };
 
   var draw = function () {
     mainCtx.save();
     mainCtx.scale(0.7, 0.7);
     _drawFirstShape(mainCtx, pos.x, pos.y);
-    mainCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    mainCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
     mainCtx.fill();
     mainCtx.translate(0, 20);
     _drawSecondShape(mainCtx, pos.x, pos.y);
@@ -243,8 +243,8 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = -130*scale;
-  var yPosition = -150*scale;
+  var xPosition = -180*scale;
+  var yPosition = -185*scale;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
