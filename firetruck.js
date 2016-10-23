@@ -10,6 +10,11 @@ var backgroundColor = 'black'
 var imageColor = 'white'
 
 
+var centerPoint = {
+  x: -40,
+  y: -150
+}
+
 
 function drawBackground () {
   mainCtx.fillStyle = backgroundColor;
@@ -28,8 +33,8 @@ var so = (function () {
   var _rotatingRadius = 57 ;
 
   var _pointO = {
-    x: -40*scale,
-    y: -130*scale,
+    x: centerPoint.x*scale,
+    y: centerPoint.y*scale,
     rad: _radius
   }
 
@@ -169,8 +174,8 @@ var so = (function () {
 
 var boom = ( function () {
   var pos = {
-    x: -150,
-    y: -130
+    x: centerPoint.x-110,
+    y: centerPoint.y
   };
 
   var draw = function () {
@@ -243,8 +248,8 @@ var bang = (function () {
   var imageOriginY = 0;
 
   var bangPositions = [];
-  var xPosition = -180*scale;
-  var yPosition = -185*scale;
+  var xPosition = (centerPoint.x - 140) * scale;
+  var yPosition = (centerPoint.y - 55) * scale;
 
   for (var i = 0; i < 70; i++) {
     bangPositions.push({
