@@ -9,12 +9,12 @@ var scale = map(width, 300, 2000, 0.8, 1.2);
 var backgroundColor = 'black'
 var imageColor = 'white'
 
+var animationID;
 
 var centerPoint = {
   x: -40,
   y: -150
 }
-
 
 function drawBackground () {
   mainCtx.fillStyle = backgroundColor;
@@ -423,8 +423,6 @@ var cha = (function () {
   }
 })()
 
-
-
 function drawEverything () {
 
   drawBackground();
@@ -439,40 +437,46 @@ function drawEverything () {
     bang.drawOutline();
   }
   // animate
-  window.requestAnimationFrame(drawEverything);
+  animationID = window.requestAnimationFrame(drawEverything);
 }
 
 function scaleEverything () {
   mainCtx.scale(scale,scale);
 }
+
 mainCtx.translate(width/2, height/2);
 scaleEverything();
 drawEverything();
 window.requestAnimationFrame(drawEverything);
 
-
-
-
-function throttle(fn, threshhold, scope) {
-  threshhold || (threshhold = 250);
-  var last,
-      deferTimer;
-  return function () {
-    var context = scope || this;
-
-    var now = +new Date,
-        args = arguments;
-    if (last && now < last + threshhold) {
-      // hold on to it
-      clearTimeout(deferTimer);
-      deferTimer = setTimeout(function () {
-        last = now;
-        fn.apply(context, args);
-      }, threshhold);
-    } else {
-      last = now;
-      fn.apply(context, args);
-    }
-  };
+function recalculate () {
+  console.log('?');
+  window.cancelAnimationFrame(animationID);
+  width = mainCanvas.width = window.innerWidth;
+  height = mainCanvas.height = window.innerHeight;
+  mainCtx.translate(width/2, height/2);
+  scaleEverything();
+  drawEverything();
 }
 
+
+var throttle = function(type, name, obj) {
+    obj = obj || window;
+    var running = false;
+    var func = function() {
+        if (running) { return; }
+        running = true;
+         requestAnimationFrame(function() {
+            obj.dispatchEvent(new CustomEvent(name));
+            running = false;
+        });
+    };
+    obj.addEventListener(type, func);
+};
+
+/* init - you can init any event */
+throttle('resize', 'optimizedResize');
+
+window.addEventListener('optimizedResize', function () {
+  recalculate();
+});
